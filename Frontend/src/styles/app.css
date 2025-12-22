@@ -1,0 +1,59 @@
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #0f172a;
+  color: #e5e7eb;
+}
+
+.container {
+  max-width: 800px;
+  margin: auto;
+  padding: 40px;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.query-box textarea {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 6px;
+  border: none;
+  resize: none;
+}
+
+.query-box button {
+  margin-top: 10px;
+  padding: 10px 16px;
+  font-size: 16px;
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.query-box button:hover {
+  background: #1d4ed8;
+}
+
+.answer-box {
+  margin-top: 30px;
+  background: #020617;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+pre {
+  white-space: pre-wrap;
+  line-height: 1.6;
+}
+
+.loader {
+  margin-top: 20px;
+  font-size: 18px;
+  text-align: center;
+}
