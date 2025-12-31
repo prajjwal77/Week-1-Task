@@ -13,15 +13,15 @@ export default function Home() {
     let width = (canvas.width = window.innerWidth);
     let height = (canvas.height = window.innerHeight);
 
-    const STAR_COUNT = 90;
+    const STAR_COUNT = 600;
     const stars = [];
 
     for (let i = 0; i < STAR_COUNT; i++) {
       stars.push({
         x: Math.random() * width,
         y: Math.random() * height,
-        vx: (Math.random() - 0.5) * 0.2,
-        vy: (Math.random() - 0.5) * 0.2,
+        vx: (Math.random() - 0.5) * 0.1,
+        vy: (Math.random() - 0.5) * 0.1,
       });
     }
 
