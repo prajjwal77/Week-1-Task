@@ -15,9 +15,9 @@ export async function askQuestion(question) {
 
   // 3) Score by cosine similarity
   const scored = chunks
-    .map(c => ({
+    .map((c) => ({
       chunk: c,
-      score: cosineSimilarity(qEmbedding, c.embedding)
+      score: cosineSimilarity(qEmbedding, c.embedding),
     }))
     .sort((a, b) => b.score - a.score)
     .slice(0, 3); // top-3 context
@@ -33,8 +33,13 @@ export async function askQuestion(question) {
   // 5) Ask LLM with grounding
   const prompt = `
 You are an enterprise SOP assistant.
-Answer ONLY using the provided context.
-If not found, say: "No relevant answer found in the provided documents."
+
+Rules:
+- Use ONLY the provided context
+- Do NOT add assumptions
+- Do NOT explain beyond the context
+- Answer in 2–3 simple sentences
+- End sentences with citations like [1]
 
 Context:
 ${context}
@@ -42,22 +47,20 @@ ${context}
 Question:
 ${question}
 
-Answer with citations like [1], [2].
+Answer:
 `;
 
- const llm = await axios.post(
-  `${OLLAMA_URL}/api/generate`,
-  {
-    model: LLM_MODEL,
-    prompt,
-    stream: false
-  },
-  {
-    headers: { "Content-Type": "application/json" }
-  }
-);
-
-
+  const llm = await axios.post(
+    `${OLLAMA_URL}/api/generate`,
+    {
+      model: LLM_MODEL,
+      prompt,
+      stream: false,
+    },
+    {
+      headers: { "Content-Type": "application/json" },
+    }
+  );
 
   // 6) Return answer + sources
   return {
@@ -65,7 +68,7 @@ Answer with citations like [1], [2].
     sources: scored.map((s, i) => ({
       ref: i + 1,
       filename: s.chunk.filename,
-      page: s.chunk.page
-    }))
+      page: s.chunk.page,
+    })),
   };
 }

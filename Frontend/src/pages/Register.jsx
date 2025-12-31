@@ -2,23 +2,34 @@ import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-export default function Login() {
+export default function Register() {
   const navigate = useNavigate();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
+
   const [show, setShow] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  // auto-redirect if already logged in
   useEffect(() => {
+    if (localStorage.getItem("token")) {
+      navigate("/dashboard");
+    }
     setMounted(true);
   }, []);
 
-  const login = async () => {
-    if (!email || !password) {
-      setError("Please fill in all fields");
+  const change = (e) =>
+    setForm({ ...form, [e.target.name]: e.target.value });
+
+  const register = async () => {
+    if (!form.name || !form.email || !form.password) {
+      setError("All fields are required");
       return;
     }
 
@@ -26,47 +37,37 @@ export default function Login() {
       setLoading(true);
       setError("");
 
-      const res = await axios.post(
-        "http://localhost:8000/api/auth/login",
-        { email, password }
-      );
+      await axios.post("http://localhost:8000/api/auth/register", form);
 
-      // store JWT
-      localStorage.setItem("token", res.data.token);
-
-      navigate("/dashboard");
+      navigate("/login");
     } catch (err) {
       setError(
-        err.response?.data?.error || "Invalid email or password"
+        err.response?.data?.error || "Registration failed"
       );
     } finally {
       setLoading(false);
     }
   };
 
-  const handleKeyDown = (e) => {
-    if (e.key === "Enter") login();
-  };
-
   return (
     <div className="relative h-screen flex items-center justify-center bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 overflow-hidden">
 
-      {/* animated background glow */}
-      <div className="absolute -top-24 -left-24 w-96 h-96 bg-indigo-600/30 rounded-full blur-3xl animate-pulse" />
-      <div className="absolute bottom-0 right-0 w-96 h-96 bg-purple-600/30 rounded-full blur-3xl animate-pulse" />
+      {/* background glow blobs */}
+      <div className="absolute -top-24 right-0 w-96 h-96 bg-indigo-600/30 rounded-full blur-3xl animate-pulse" />
+      <div className="absolute bottom-0 left-0 w-96 h-96 bg-purple-600/30 rounded-full blur-3xl animate-pulse" />
 
       {/* glass card */}
       <div
-        className={`relative z-10 w-[380px] p-8 rounded-2xl 
+        className={`relative z-10 w-[400px] p-8 rounded-2xl 
         bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl
         transform transition-all duration-700
         ${mounted ? "scale-100 opacity-100" : "scale-95 opacity-0"}`}
       >
         <h2 className="text-3xl font-bold mb-2 text-center text-white">
-          Welcome Back
+          Create Account
         </h2>
         <p className="text-center text-sm text-white/70 mb-6">
-          Sign in to OpsMind AI
+          Join OpsMind AI
         </p>
 
         {/* Error */}
@@ -76,17 +77,31 @@ export default function Login() {
           </div>
         )}
 
+        {/* Name */}
+        <div className="mb-4">
+          <label className="text-sm text-white/70">Full Name</label>
+          <input
+            name="name"
+            className="w-full mt-1 px-4 py-2 rounded-lg bg-white/20 text-white
+                       placeholder-white/60 outline-none
+                       focus:ring-2 focus:ring-indigo-400 transition"
+            placeholder="Your name"
+            value={form.name}
+            onChange={change}
+          />
+        </div>
+
         {/* Email */}
         <div className="mb-4">
           <label className="text-sm text-white/70">Email</label>
           <input
-            onKeyDown={handleKeyDown}
+            name="email"
             className="w-full mt-1 px-4 py-2 rounded-lg bg-white/20 text-white
                        placeholder-white/60 outline-none
                        focus:ring-2 focus:ring-indigo-400 transition"
             placeholder="you@company.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={form.email}
+            onChange={change}
           />
         </div>
 
@@ -94,14 +109,14 @@ export default function Login() {
         <div className="mb-6 relative">
           <label className="text-sm text-white/70">Password</label>
           <input
-            onKeyDown={handleKeyDown}
             type={show ? "text" : "password"}
+            name="password"
             className="w-full mt-1 px-4 py-2 rounded-lg bg-white/20 text-white
                        placeholder-white/60 outline-none
                        focus:ring-2 focus:ring-indigo-400 transition"
             placeholder="••••••••"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            value={form.password}
+            onChange={change}
           />
           <button
             type="button"
@@ -114,7 +129,7 @@ export default function Login() {
 
         {/* Button */}
         <button
-          onClick={login}
+          onClick={register}
           disabled={loading}
           className={`w-full py-3 rounded-lg font-semibold tracking-wide transition
           ${loading
@@ -122,17 +137,17 @@ export default function Login() {
             : "bg-indigo-500 hover:bg-indigo-600 active:scale-95"
           }`}
         >
-          {loading ? "Signing in..." : "Login"}
+          {loading ? "Creating account..." : "Create Account"}
         </button>
 
         {/* Footer */}
         <p className="mt-6 text-center text-sm text-white/60">
-          Don’t have an account?{" "}
+          Already have an account?{" "}
           <span
-            onClick={() => navigate("/register")}
+            onClick={() => navigate("/login")}
             className="text-indigo-300 hover:underline cursor-pointer"
           >
-            Create one
+            Login
           </span>
         </p>
       </div>

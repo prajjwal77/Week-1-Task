@@ -6,7 +6,12 @@ import authRoutes from "./routes/auth.routes.js";
 import chatRoutes from "./routes/chat.routes.js";
 import uploadRoutes from "./routes/upload.routes.js";
 import vectorRoutes from "./routes/vector.routes.js"; // ✅ ADD THIS
+import dotenv from "dotenv";
+import profileRoutes from "./routes/profile.routes.js";
+import statsRoutes from "./routes/stats.routes.js";
 
+dotenv.config({ path: ".env" });
+dotenv.config({ path: ".env.local" });
 // 🔥 TEMP CONFIG (TO CONFIRM SYSTEM WORKS)
 const MONGO_URI = "mongodb://127.0.0.1:27017/ai_project";
 const GEMINI_API_KEY = "AIzaSyAOd-Yjr6B19fI86YZfqwCUpQClXmXZVCY";
@@ -27,7 +32,8 @@ app.use("/api/auth", authRoutes);
 app.use("/api/chat", chatRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/api/vector", vectorRoutes); // ✅ ADD THIS
-
+app.use("/api/profile", profileRoutes);
+app.use("/api/stats", statsRoutes);
 mongoose
   .connect(MONGO_URI)
   .then(() => console.log("✅ MongoDB Connected"))
