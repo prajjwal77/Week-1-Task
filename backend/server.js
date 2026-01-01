@@ -34,6 +34,9 @@ app.use("/api/upload", uploadRoutes);
 app.use("/api/vector", vectorRoutes); // ✅ ADD THIS
 app.use("/api/profile", profileRoutes);
 app.use("/api/stats", statsRoutes);
+app.use(express.json());
+
+
 mongoose
   .connect(MONGO_URI)
   .then(() => console.log("✅ MongoDB Connected"))
